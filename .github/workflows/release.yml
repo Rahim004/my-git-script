@@ -1,0 +1,24 @@
+name: Daily Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Каждый день в полночь
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Get Date
+      run: |
+        MONTH=$(date +'%-m')
+        WEEK=$(date +'%-U')
+        DAY=$(date +'%-u')
+        echo "v$MONTH.$WEEK.$DAY" > version.txt
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: $(cat version.txt)
+        name: "Release $(cat version.txt)"
+        body: "Автоматический релиз от $(date)"     
